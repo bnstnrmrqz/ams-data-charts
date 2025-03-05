@@ -2,11 +2,23 @@
 function shortcode_ams_data_chart($atts)
 {
 	$a = shortcode_atts(array(
-		'city' => 'Benicia' // (string) Benicia | Sunnyvale
+		'type' => 'tthm', // (string) tthm | mg
+		'city' => 'Benicia' // (string) Benicia | Sunnyvale | San Bernardino County (if[type]=mg)
 	), $atts);
 
 	ob_start();
-	$endpoint = 'https://amslivedataapi.azurewebsites.net/Thm/Readings';
+
+	// Fetch data from API
+	if($a['type'] === 'tthm')
+	{
+		$endpoint = 'https://amslivedataapi.azurewebsites.net/Thm/Readings';
+		$chartTitle = 'THM Concentration (ppb)';
+	}
+	elseif($a['type'] === 'mg')
+	{
+		$endpoint = 'https://amslivedataapi.azurewebsites.net/Mg/Readings';
+		$chartTitle = 'Cr(VI) Concentration (ppb)';
+	}
 	try
 	{
 		$json = file_get_contents($endpoint);
@@ -20,6 +32,7 @@ function shortcode_ams_data_chart($atts)
 			throw new Exception('Error decoding the JSON feed.');
 		}
 		$jsData = []; // Store formatted data
+		//echo '<pre>'; print_r($data); echo '</pre>';
 		foreach($data as $region)
 		{
 			foreach($region['cities'] as $city)
@@ -32,14 +45,20 @@ function shortcode_ams_data_chart($atts)
 						$timestamp = $reading['timeStamp']; // Keep as ISO 8601 string
 						$formattedDate = date('M d, Y \a\t H:i', strtotime($timestamp));
 
-						$value = $reading['tthmConc'];
-
 						$sampleType = $reading['sampleType'];
 						if($sampleType === 'online'): $formattedType = 'TTHM'; elseif($sampleType === 'thm_fp'): $formattedType = 'THM-FP'; endif;
 
-						//$tooltip = '<div style="padding:10px;"><p style="margin:0;"><strong>'.$formattedDate.'</strong><br>'.number_format($value, 1).' '.$formattedType.'</p></div>';
-						$tooltip = $formattedDate.' '.number_format($value, 1).' '.$formattedType;
-						//$tooltip = htmlspecialchars_decode($tooltip, ENT_QUOTES);
+						if($a['type'] === 'tthm')
+						{
+							$value = $reading['tthmConc'];
+							$tooltip = $formattedDate.' '.number_format($value, 1).' '.$formattedType;
+						}
+						elseif($a['type'] === 'mg')
+						{
+							$value = $reading['concentration'];
+							$tooltip = $formattedDate.' '.number_format($value, 1).' '.$formattedType;
+						}
+
 						$jsData[] = "[new Date('$timestamp'), $value, '$tooltip']";
 					}
 					break; // Stop processing other cities
@@ -65,7 +84,6 @@ function shortcode_ams_data_chart($atts)
 				var data = new google.visualization.DataTable();
 				data.addColumn('datetime', 'Timestamp');
 				data.addColumn('number', 'Value');
-				//data.addColumn({ type:'string', role: 'tooltip', 'p': {'html': true } });
 				data.addColumn({ type:'string', role: 'tooltip' });
 
 				data.addRows([
@@ -73,13 +91,11 @@ function shortcode_ams_data_chart($atts)
 				]);
 
 				var options = {
-					title: 'Real-time THM data, <?php echo $a['city'];?>, California',
-					//tooltip: { isHtml: true },
 					curveType: 'function',
 					legend: { position: 'left' },
 					hAxis: { title: null, format: 'MMM dd, HH:mm' },
 					vAxis: {
-						title: 'THM Concentration (ppb)',
+						title: '<?php echo $chartTitle;?>',
 						minValue: 0,
 						maxValue: 100,
 						gridlines: { color: '#E0E0E0' },
