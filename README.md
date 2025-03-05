@@ -28,5 +28,6 @@ _**Note:** The `city="San Bernardino County"` attribute can only be used with th
 - **1.0.1** — March 5, 2025
   - Added additional "type" attribute.
   - _**Please read the updated [Attribute Usage](#attribute-usage) section.**_
+  - Updated WordPress plugin description.
 - **1.0.0** — March 3, 2025
   - Initial public release.
