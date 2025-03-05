@@ -2,14 +2,14 @@
 
 /**
  * @link              https://https://github.com/bnstnrmrqz
- * @since             1.0.1
+ * @since             1.0.0
  * @package           Ams_Data_Charts
  *
  * @wordpress-plugin
  * Plugin Name:       AMS Data Charts
  * Plugin URI:        https://https://github.com/bnstnrmrqz/ams-data-charts
- * Description:       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent non augue turpis. Donec sodales nisl ultricies diam congue, a eleifend neque vestibulum. Proin a cursus mi, eu porttitor odio.
- * Version:           1.0.0
+ * Description:       The AMS Data Charts plugin allows users to generate interactive charts via a shortcode on their WordPress website. Utilizing Google's Charts API, the plugin visualizes data in a clear and customizable format, making it easy to display analytical insights, trends, and real-time readings from sources like the Aqua Metrology Systems (AMS) API.
+ * Version:           1.0.1
  * Author:            Ben Steiner Marquez
  * Author URI:        https://https://github.com/bnstnrmrqz
  * License:           GPL-2.0+
