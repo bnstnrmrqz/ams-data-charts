@@ -1,5 +1,7 @@
 # AMS Data Charts WordPress Plugin
 
+The AMS Data Charts plugin allows users to generate interactive charts via a shortcode on their WordPress website. Utilizing Google's Charts API, the plugin visualizes data in a clear and customizable format, making it easy to display analytical insights, trends, and real-time readings from sources like the Aqua Metrology Systems (AMS) API.
+
 **Features:**
 
 - Simple shortcode-based integration (e.g., `[ams_data_chart]`)
