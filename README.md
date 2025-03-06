@@ -27,6 +27,8 @@ _**Note:** The `city="San Bernardino County"` attribute can only be used with th
 
 ## Changelog
 
+- **1.0.2** — March 6, 2025
+  - Completed updates in `ams-data-charts-shortcode.php` file.
 - **1.0.1** — March 5, 2025
   - Added additional "type" attribute.
   - _**Please read the updated [Attribute Usage](#attribute-usage) section.**_
