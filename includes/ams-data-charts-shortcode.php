@@ -13,11 +13,17 @@ function shortcode_ams_data_chart($atts)
 	{
 		$endpoint = 'https://amslivedataapi.azurewebsites.net/Thm/Readings';
 		$chartTitle = 'THM Concentration (ppb)';
+		$maxValue = 100;
+		$baseline = 80;
+		$baselineColor = 'red';
 	}
 	elseif($a['type'] === 'mg')
 	{
 		$endpoint = 'https://amslivedataapi.azurewebsites.net/Mg/Readings';
 		$chartTitle = 'Cr(VI) Concentration (ppb)';
+		$maxValue = 35;
+		$baseline = 0;
+		$baselineColor = 'transparent';
 	}
 	try
 	{
@@ -45,18 +51,24 @@ function shortcode_ams_data_chart($atts)
 						$timestamp = $reading['timeStamp']; // Keep as ISO 8601 string
 						$formattedDate = date('M d, Y \a\t H:i', strtotime($timestamp));
 
-						$sampleType = $reading['sampleType'];
-						if($sampleType === 'online'): $formattedType = 'TTHM'; elseif($sampleType === 'thm_fp'): $formattedType = 'THM-FP'; endif;
-
 						if($a['type'] === 'tthm')
 						{
+							$sampleType = $reading['sampleType'];
+							if($sampleType === 'online')
+							{
+								$formattedType = 'TTHM';
+							}
+							elseif($sampleType === 'thm_fp')
+							{
+								$formattedType = 'THM-FP';
+							}
 							$value = $reading['tthmConc'];
-							$tooltip = $formattedDate.' '.number_format($value, 1).' '.$formattedType;
+							$tooltip = $formattedDate.' — '.number_format($value, 1).' '.$formattedType;
 						}
 						elseif($a['type'] === 'mg')
 						{
 							$value = $reading['concentration'];
-							$tooltip = $formattedDate.' '.number_format($value, 1).' '.$formattedType;
+							$tooltip = $formattedDate.' — '.number_format($value, 1).' ppb';
 						}
 
 						$jsData[] = "[new Date('$timestamp'), $value, '$tooltip']";
@@ -93,14 +105,14 @@ function shortcode_ams_data_chart($atts)
 				var options = {
 					curveType: 'function',
 					legend: { position: 'left' },
-					hAxis: { title: null, format: 'MMM dd, HH:mm' },
+					hAxis: { title: null, format: 'MMM dd YY, HH:mm' },
 					vAxis: {
 						title: '<?php echo $chartTitle;?>',
 						minValue: 0,
-						maxValue: 100,
+						maxValue: <?php echo $maxValue;?>,
 						gridlines: { color: '#E0E0E0' },
-						baseline: 80, // Sets the threshold visually
-						baselineColor: 'red' // Colors the threshold line
+						baseline: <?php echo $baseline;?>, // Sets the threshold visually
+						baselineColor: '<?php echo $baselineColor;?>' // Colors the threshold line
 					},
 					chartArea: { width: '85%', height: '70%' },
 					pointSize: 5,
